@@ -34,9 +34,12 @@ PYTHONPATH=src python3 -m pytest -q
 
 기대 결과:
 ```
-623 passed, 8 skipped, 1 xfailed        # 원본 Fortran 없이
-623 passed, 10 skipped, 1 xfailed                   # 원본 Fortran 있을 때
+516 passed, 125 skipped, 1 xfailed
 ```
+
+건너뛴 시험은 원본 Fortran, 선택 의존성(CoolProp), 또는 제3자 관측자료가
+없어서입니다. 무엇을 갖추었는지에 따라 개수가 달라지며, **없다고 실패하지는
+않습니다.**
 
 `xfailed` 1건은 **의도된 것**입니다 — 알려진 실패(고밀도 저속 제트)를
 재현 데크와 함께 남겨둔 것입니다.

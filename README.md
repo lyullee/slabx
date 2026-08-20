@@ -1,5 +1,8 @@
 # slabx
 
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.22023625.svg)](https://doi.org/10.5281/zenodo.22023625)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+
 A Python reimplementation of **SLAB**, the dense-gas dispersion model of
 Ermak (1990, UCRL-MA-105607), verified against the original Fortran and
 evaluated against 38 field and wind-tunnel trials.
@@ -105,11 +108,16 @@ factor of two and reverse the recommended surface roughness.
 ## Tests
 
 ```bash
-pytest -q            # 633 with the oracle; 623 + 10 skipped without it
+pytest -q
 python3 examples/validate_burro.py     # field comparison, pre-registered
 python3 examples/diagnose_burro.py     # how the hypotheses were excluded
 python3 -c "from slabx.scope import describe_scope; print(describe_scope())"
 ```
+
+Tests that need the original SLAB source, an optional dependency, or a
+third-party observation are skipped when the resource is absent, so the
+counts depend on what you have installed and obtained. Nothing fails for
+want of them.
 
 The one `xfailed` is deliberate: a reproducible failure kept with its input
 deck rather than hidden.
@@ -132,7 +140,16 @@ everything else runs.
 
 ## Citing
 
-The model is Ermak's:
+Cite the version you ran -- the version DOI fixes the files, the concept DOI
+resolves to the latest:
+
+> Lee, U. (2026). *slabx: a Python reimplementation of the SLAB dense-gas
+> dispersion model* (v1.0.2). Zenodo. Concept DOI
+> [10.5281/zenodo.22023625](https://doi.org/10.5281/zenodo.22023625).
+
+`CITATION.cff` carries the same in machine-readable form.
+
+The model itself is Ermak's:
 
 > Ermak, D.L. (1990) *User's Manual for SLAB: An Atmospheric Dispersion Model
 > for Denser-than-Air Releases*. UCRL-MA-105607, Lawrence Livermore National

@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "slabx"
-version = "1.0.0"
+version = "1.0.2"
 description = "A Python reimplementation of the SLAB dense-gas dispersion model, verified against the original and evaluated against field and wind-tunnel trials"
 readme = "README.md"
 requires-python = ">=3.10"

@@ -20,18 +20,6 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
----
 
-A note on the original SLAB -- see also THIRD_PARTY_NOTICES.md
-
-This project is an independent reimplementation of the SLAB model described in
-
-    Ermak, D.L. (1990) User's Manual for SLAB: An Atmospheric Dispersion Model
-    for Denser-than-Air Releases. UCRL-MA-105607, Lawrence Livermore National
-    Laboratory.
-
-No part of the original source is included here. That source carries a
-non-commercial restriction of its own -- it may not be distributed as part of
-any commercial product, and no fee may be charged for distributing it -- which
-is incompatible with the licence above. Users who want to run the comparison
-harness obtain the original themselves; see golden/fortran/README.md.
+Third-party material, including the original SLAB source and its terms, is
+described in THIRD_PARTY_NOTICES.md. None of it is included here.

@@ -1,8 +1,10 @@
 # Third-party material
 
-This repository contains no third-party code or data. What follows records
-the third-party works this project depends on, so that a reader can obtain
-them and see what was relied on.
+This repository contains no third-party source files and no tabulated
+observational datasets. It does contain citations, and a small number of
+reported or derived values needed to document and test the published
+findings. What follows records the third-party works this project depends
+on, so that a reader can obtain them and see what was relied on.
 
 ## The model
 

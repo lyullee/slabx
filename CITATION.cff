@@ -1,0 +1,46 @@
+cff-version: 1.2.0
+message: >-
+  If you use this software, please cite the version you actually ran. The
+  version DOI fixes the files; the concept DOI always resolves to the latest.
+title: "slabx: a Python reimplementation of the SLAB dense-gas dispersion model"
+abstract: >-
+  A Python reimplementation of SLAB (Ermak 1990, UCRL-MA-105607), verified
+  against the original Fortran on the five worked examples of the manual and
+  on randomly sampled input decks, and evaluated against field and
+  wind-tunnel trials. Coefficients are exposed rather than embedded, so
+  sensitivity and ablation studies need no edits to the source. The original
+  Fortran and the validation observations are third-party and are not
+  redistributed; their sources and the transformations applied are recorded
+  in machine-readable manifests.
+type: software
+authors:
+  - family-names: Lee
+    given-names: Ugwiyeon
+    affiliation: Korea Gas Safety Corporation
+    email: lyullee@kgs.or.kr
+license: MIT
+repository-code: "https://github.com/lyullee/slabx"
+version: 1.0.2
+date-released: "2026-08-20"
+doi: 10.5281/zenodo.22023625
+keywords:
+  - dense gas dispersion
+  - atmospheric dispersion
+  - model validation
+  - SLAB
+  - process safety
+references:
+  - type: report
+    title: >-
+      User's Manual for SLAB: An Atmospheric Dispersion Model for
+      Denser-than-Air Releases
+    authors:
+      - family-names: Ermak
+        given-names: Donald L.
+    institution:
+      name: Lawrence Livermore National Laboratory
+    number: UCRL-MA-105607
+    year: 1990
+    notes: >-
+      The model implemented here. Its source is not redistributed with this
+      software; see THIRD_PARTY_NOTICES.md.

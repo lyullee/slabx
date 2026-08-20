@@ -93,11 +93,14 @@ def require(name: str) -> Path:
     """
     Path to an observation file, or `ObservationsUnavailable`.
 
-    Looks in the user's data directory first, then inside the package. The
-    second is only so that a working copy with the observations in place
-    keeps running; a published install has nothing there but the manifests.
+    Only the user's data directory is searched. An earlier version also fell
+    back to `DATA`, inside the package, so that a working copy with the
+    observations left in place kept running. That fallback is gone: it made
+    the package a place observations could live, which is exactly what the
+    separation is meant to prevent, and it meant a developer could pass tests
+    that a reader could not.
     """
-    for path in (data_root() / name, DATA / name):
-        if path.exists():
-            return path
-    raise ObservationsUnavailable(name, _hint_for(name))
+    path = data_root() / name
+    if not path.exists():
+        raise ObservationsUnavailable(name, _hint_for(name))
+    return path
