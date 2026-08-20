@@ -32,10 +32,7 @@ pip install CoolProp               # 실물성 — 없으면 관련 테스트만
 PYTHONPATH=src python3 -m pytest -q
 ```
 
-기대 결과:
-```
-516 passed, 125 skipped, 1 xfailed
-```
+기대 결과: 실패 0, `xfailed` 1, 그리고 다수의 `skipped`.
 
 건너뛴 시험은 원본 Fortran, 선택 의존성(CoolProp), 또는 제3자 관측자료가
 없어서입니다. 무엇을 갖추었는지에 따라 개수가 달라지며, **없다고 실패하지는
