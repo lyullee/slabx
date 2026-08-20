@@ -1,0 +1,38 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "slabx"
+version = "0.0.1.dev0"
+description = "A Python reimplementation of the SLAB dense-gas dispersion model, verified against the original and evaluated against field and wind-tunnel trials"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+dependencies = [
+    "numpy>=1.24",
+    "scipy>=1.10",
+]
+
+[project.optional-dependencies]
+thermo = ["CoolProp>=6.5"]
+data = ["pandas>=2.0", "xarray>=2023.1"]
+dev = ["pytest>=7.4", "pytest-cov"]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
+
+
+[tool.setuptools.package-data]
+# Only our own files. Third-party observations are never inside the package
+# -- they are looked for under $SLABX_VALIDATION_DATA -- so there is nothing
+# here that could carry them into a wheel or an sdist by accident.
+"slabx.validation" = [
+    "data/provenance/*.csv",
+    "data/provenance/*.md",
+    "data/smedis_inventory.csv",
+]

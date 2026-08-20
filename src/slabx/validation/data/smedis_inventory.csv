@@ -1,0 +1,29 @@
+file,dataset,trial,substance,release_type,obstacle,slope_pct,z0_m,usable,exclusion_reason
+dt1,Desert Tortoise,DT1,ammonia,jet,none,0,0.003,True,
+dt2,Desert Tortoise,DT2,ammonia,jet,none,0,0.003,True,
+fladis9,FLADIS,Trial009,ammonia,jet,none,0,0.04,True,
+fladis16,FLADIS,Trial016,ammonia,jet,none,0,0.04,True,
+fladis24,FLADIS,Trial024,ammonia,jet,none,0,0.04,True,
+pg8,Prairie Grass,PG8,SO2,continuous,none,0,0.006,True,
+pg17,Prairie Grass,PG17,SO2,continuous,none,0,0.006,True,
+ti08,Thorney Island,Trial 008,R12,puff,none,0,0.005,True,
+lat49,BA-Propane,EEC49,propane,puff,none,0,0.006,True,dose over-predicted 10x; passage duration closure fails at this scale
+ti21,Thorney Island,Trial 021,R12,puff,curved wall,0,0.005,False,obstacle not represented
+eec170,EEC,EEC170,propane,jet,none,0,0.006,False,site coordinate frame not recoverable
+eec171,EEC,EEC171,propane,jet,1 fence,0,0.006,False,obstacle + coordinate frame
+eec360,EEC,EEC360,propane,jet,none,0,0.006,False,site coordinate frame not recoverable
+eec361,EEC,EEC361,propane,jet,1 fence,0,0.006,False,obstacle + coordinate frame
+eec362,EEC,EEC362,propane,jet,2 fences,0,0.006,False,obstacle + coordinate frame
+eec550,EEC,EEC550,propane,jet,none,0,0.006,False,site coordinate frame not recoverable
+eec551,EEC,EEC551,propane,jet,1 fence,0,0.006,False,obstacle + coordinate frame
+eec560,EEC,EEC560,propane,jet,none,0,0.006,False,site coordinate frame not recoverable
+eec561,EEC,EEC561,propane,jet,1 fence,0,0.006,False,obstacle + coordinate frame
+dat231,BA-Hamburg,DAT231,SF6,puff,parallel wall,0,0.0001,False,obstacle not represented
+dat458,BA-Hamburg,DAT458,SF6,puff,trench,0,0.0001,False,obstacle not represented
+dat638,BA-Hamburg,DAT638,SF6,puff,none,11.6,0.0001,False,surface slope not represented
+dat647,BA-Hamburg,DAT637,SF6,jet,none,4.0,0.0001,False,surface slope not represented
+dat648,BA-Hamburg,DAT648,SF6,puff,none,4.0,0.0001,False,surface slope not represented
+tuv11,TNO-BA,TUV11,SF6,jet,none,0,5e-05,False,"wind-tunnel jet at tunnel scale; usable in principle but not extracted (arc data not digitised). The earlier reason, 'roughness 5 m', was a misreading of 5e-05"
+tuv13,BA-TNO,TUV13,SF6,jet,oblique wall,0,0.0001,False,obstacle not represented
+129034,BA-Hamburg,129034,SF6,jet,canyon,0,0.0001,False,obstacle not represented
+049101,BA-Hamburg,49101,SF6,puff,box array,0,0.0001,False,obstacle not represented

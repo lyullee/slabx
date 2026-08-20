@@ -1,0 +1,18 @@
+__pycache__/
+*.py[cod]
+.pytest_cache/
+*.egg-info/
+.venv/
+build/
+dist/
+
+# The original SLAB source and anything built from it are not redistributable
+# under this project's licence; see golden/fortran/README.md.
+golden/fortran/slab.f
+golden/fortran/slab
+golden/fortran/predict
+golden/fortran/input
+
+# scratch
+my_run_output.csv
+golden/*.csv
