@@ -317,14 +317,21 @@ def _limits(fluid: str) -> tuple[float, float]:
     T_t = float(CP.PropsSI("Ttriple", fluid))
     try:
         return T_t, float(CP.PropsSI("Tcrit", fluid))
-    except Exception:
-        pass
-    # For a mixture CoolProp solves for the critical point, and the solve
-    # fails for some compositions.  Kay's rule — the mole-fraction average of
-    # the pure critical temperatures — is close enough: the value is used
-    # only to bound queries away from the critical region, not as a property.
-    if "[" not in fluid:
-        raise
+    except Exception as exc:
+        # For a mixture CoolProp solves for the critical point, and the
+        # solve fails for some compositions.  Kay's rule -- the
+        # mole-fraction average of the pure critical temperatures -- is
+        # close enough: the value is used only to bound queries away from
+        # the critical region, not as a property.
+        #
+        # A pure fluid has no composition to average, so its failure is a
+        # real one and is re-raised.  This used to be a bare `raise` placed
+        # after the `except` block had already closed, which raised
+        # `RuntimeError: No active exception to reraise` and hid whatever
+        # CoolProp had actually complained about.
+        if "[" not in fluid:
+            raise
+        failure = exc
     total = crit = 0.0
     for part in fluid.split("&"):
         name, _, frac = part.partition("[")

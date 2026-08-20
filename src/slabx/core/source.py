@@ -194,6 +194,18 @@ def initial_cloud_height(
     """
     if dx <= 0:
         raise ValueError("dx must be > 0")
+    if atm.u_star <= 0.0:
+        # `Atmosphere` admits zero wind as degenerate but possible, and
+        # F-stability siting calculations sit close to it. The initial
+        # height then has no mechanical mixing to set it, so the equation
+        # below divides by zero. Refuse here with a reason rather than let
+        # ZeroDivisionError surface from inside the source construction.
+        raise ValueError(
+            "the initial cloud height needs a non-zero friction velocity; "
+            f"u* = {atm.u_star:.3g} for u_ref = {atm.u_ref:.3g} m/s. "
+            "SLAB has no still-air limit: with no wind the shallow-layer "
+            "formulation has no advection to balance the spreading."
+        )
     z0 = atm.z0
     k = PHYS.VON_KARMAN
     z1 = (SQRT3 * coeffs.a_entrain * k**3

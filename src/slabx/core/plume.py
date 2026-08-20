@@ -227,17 +227,23 @@ def slopes(
     # dilution only — see `entrainment()` for why it must not enter EQ 7.
     f[0] = (atm.rho * SQRT3 * ((st.v_e + st.v_front) * h + st.w_e * B)
             + src_flux.mass)
-    f[1] = (SQRT3 * (atm.rho / st.rho) * st.v_e + st.v_g) / st.u
-    f[2] = (st.v_g * st.b_shape) / (st.u * B) if B > 0 else 0.0
+    # Every slope below divides by the cloud speed, and `u` reaches zero in
+    # the degenerate calm case that `Atmosphere` deliberately admits (see
+    # `tests/test_scope.py::test_zero_wind_is_allowed`). Guarding two of the
+    # divisions and not the rest let `u_ref = 0` raise ZeroDivisionError from
+    # inside the integrator, which contradicted the scope statement.
+    inv_u = 1.0 / st.u if st.u > 0.0 else 0.0
+    f[1] = (SQRT3 * (atm.rho / st.rho) * st.v_e + st.v_g) * inv_u
+    f[2] = (st.v_g * st.b_shape) * inv_u / B if B > 0 else 0.0
     f[3] = c.alpha_gv * PHYS.GRAVITY * d_rho * h * h
     f[4] = st.f_t
     f[5] = st.f_u
     f[6] = -PHYS.GRAVITY * d_rho * B * h
-    f[7] = st.w_c / st.u
+    f[7] = st.w_c * inv_u
     f[8] = 2.0 * st.rho * B * h * st.m
     f[9] = st.f_v
     f[10] = st.f_w
-    f[11] = SQRT3 * st.w_e / st.u if st.u > 0 else 0.0
+    f[11] = SQRT3 * st.w_e * inv_u
     # Rainout: liquid lost to the ground per unit distance.  Not Ermak's;
     # zero unless a droplet model is supplied, so the default path is
     # untouched.  The mass leaves the cloud, so it leaves EQ 2a as well.
@@ -247,7 +253,7 @@ def slopes(
     f[0] -= st.rainout_flux
     # Droplet area shrinks by the d-squared law; zero unless finite-rate
     # evaporation is switched on, so the default path is Ermak's.
-    f[13] = -st.evap_rate / st.u if st.u > 0 else 0.0
+    f[13] = -st.evap_rate * inv_u
     return f
 
 

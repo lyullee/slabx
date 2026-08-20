@@ -13,6 +13,8 @@ as they know what it is worth.
 
 import warnings
 
+import numpy as np
+
 import pytest
 
 from slabx.core.source import EvaporatingPool
@@ -149,3 +151,44 @@ def test_the_summary_names_what_is_out_of_scope_entirely():
     for phrase in ("obstacles", "terrain", "Froude", "BuoyantRise",
                    "dense, slow two-phase jets"):
         assert phrase in text
+
+
+def test_zero_wind_is_refused_with_a_reason_not_a_zero_division():
+    """
+    `Atmosphere` admits zero wind as degenerate but possible
+    (`test_zero_wind_is_allowed`), and then `u* = 0`. The initial cloud
+    height divides by `u*`, so a run at `u_ref = 0` used to surface
+    `ZeroDivisionError: float division by zero` from inside the source
+    construction -- an inconsistency between what the scope statement
+    permits and what the integrator accepts.
+
+    SLAB has no still-air limit, so refusing is right; doing it with a
+    reason is what was missing.
+    """
+    from slabx.core.plume import run_dispersion
+    from slabx.core.source import EvaporatingPool
+    from slabx.thermo.base import LegacyThermo, Substance, water_backend
+
+    sub = Substance(name="LNG", mw=0.016043, cp_vapour=2238.0,
+                    cp_liquid=3348.5, dh_vap=509900.0, T_boil=111.7,
+                    rho_liquid=424.1)
+    src = EvaporatingPool(substance=sub, rate=116.93, area=700.0,
+                          duration=107.0)
+
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore", ScopeWarning)
+        calm = Atmosphere(u_ref=0.0, z_ref=3.0, T=290.0, rh=50.0, z0=2e-4,
+                          stability="E")
+        assert calm.u_star == 0.0
+
+        with pytest.raises(ValueError, match="friction velocity"):
+            run_dispersion(src, calm, LegacyThermo(sub), water_backend(),
+                           x_max=500.0, n_puff_steps=40)
+
+        # and the smallest wind the envelope warns about still runs
+        faint = Atmosphere(u_ref=0.1, z_ref=3.0, T=290.0, rh=50.0, z0=2e-4,
+                           stability="E")
+        traj, _ = run_dispersion(src, faint, LegacyThermo(sub),
+                                 water_backend(), x_max=500.0,
+                                 n_puff_steps=40)
+        assert np.all(np.isfinite(traj.h))
