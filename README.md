@@ -21,16 +21,26 @@ from slabx.thermo.base import LegacyThermo, Substance, water_backend
 LNG = Substance(name="LNG", mw=0.016043, cp_vapour=2238.0, cp_liquid=3348.5,
                 dh_vap=509900.0, T_boil=111.7, rho_liquid=424.1)
 
-atm = Atmosphere(u_ref=1.94, z_ref=3.0, T=306.0, rh=4.6, z0=2e-4,
+atm = Atmosphere(u_ref=1.94, z_ref=3.0, T=290.0, rh=50.0, z0=2e-4,
                  stability="E")
-src = EvaporatingPool(substance=LNG, rate=116.93, area=657.0, duration=107.0)
+
+# The pool area is the spill divided by the evaporation flux, not the
+# footprint quoted in the manual, and the manual's worked example uses
+# demonstration weather rather than the trial's. Both matter: the manual's
+# 657 m2 with T = 306 K and 4.6 % humidity gives 386 m instead of 449.
+src = EvaporatingPool(substance=LNG, rate=116.93, area=116.93 / 0.167,
+                      duration=107.0)
 
 traj, used = run_dispersion(src, atm, LegacyThermo(LNG), water_backend(),
-                            x_max=1000.0)
+                            x_max=2000.0, n_puff_steps=40)
 field = concentration_field(traj, atm, z=1.0, t_avg=80.0, t_release=107.0)
 
-print(f"{field.distance_to(0.05):.0f} m to LFL")     # Burro 8: measured 455 m
+print(f"{field.distance_to(0.05):.0f} m to LFL")     # 449; measured 455
 ```
+
+`slabx.validation.lng_pools` sets all of this from the trial record, which
+is the path the paper's numbers come from -- but it needs the observations,
+which are not distributed here. See below.
 
 ## Install
 

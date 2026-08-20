@@ -111,10 +111,10 @@ LNG = Substance(name="LNG", mw=0.016043, cp_vapour=2238.0,
                 T_boil=111.7, rho_liquid=424.1)
 
 # Burro 8: 저풍속·안정 — 규제상 가장 중요한 조건
-atm = Atmosphere(u_ref=1.94, z_ref=3.0, T=306.0, rh=4.6,
+atm = Atmosphere(u_ref=1.94, z_ref=3.0, T=290.0, rh=50.0,
                  z0=2e-4, stability="E")
 src = EvaporatingPool(substance=LNG, rate=116.93,
-                      area=657.0, duration=107.0)
+                      area=116.93 / 0.167, duration=107.0)
 
 traj, used = run_dispersion(src, atm, LegacyThermo(LNG), water_backend(),
                             x_max=1000.0, n_puff_steps=40)
