@@ -8,15 +8,24 @@
 
 ## 1. 준비 (5분)
 
+모델만 쓰실 거면 한 줄입니다.
+
 ```bash
-unzip slabx.zip
+pip install slabx                  # numpy, scipy
+pip install "slabx[thermo]"        # 실물성(CoolProp)까지
+```
+
+시험군까지 돌리시려면 저장소를 받으십시오 — `tests/` 는 패키지에
+들어가지 않습니다.
+
+```bash
+git clone https://github.com/lyullee/slabx.git
 cd slabx
 
 python3 -m venv .venv
 source .venv/bin/activate          # Windows: .venv\Scripts\activate
 
-pip install numpy scipy pytest
-pip install CoolProp               # 실물성 — 없으면 관련 테스트만 건너뜀
+pip install -e ".[thermo,dev]"
 ```
 
 **원본 SLAB 대조는 선택**입니다. 없어도 나머지는 다 돌아갑니다 (관련

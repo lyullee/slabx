@@ -1,6 +1,7 @@
 # slabx
 
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.22023625.svg)](https://doi.org/10.5281/zenodo.22023625)
+[![PyPI](https://img.shields.io/pypi/v/slabx.svg)](https://pypi.org/project/slabx/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
 A Python reimplementation of **SLAB**, the dense-gas dispersion model of
@@ -48,8 +49,14 @@ which are not distributed here. See below.
 ## Install
 
 ```bash
-pip install -e .            # numpy, scipy
-pip install CoolProp        # optional: real-fluid properties
+pip install slabx                 # numpy, scipy
+pip install "slabx[thermo]"       # adds CoolProp for real-fluid properties
+```
+
+From a clone, for development or to run the tests:
+
+```bash
+pip install -e ".[thermo,dev]"
 ```
 
 Python 3.10+. `QUICKSTART.md` has a runnable scenario template and a
@@ -144,8 +151,14 @@ Cite the version you ran -- the version DOI fixes the files, the concept DOI
 resolves to the latest:
 
 > Lee, U. (2026). *slabx: a Python reimplementation of the SLAB dense-gas
-> dispersion model* (v1.0.2). Zenodo. Concept DOI
+> dispersion model*. Zenodo. Concept DOI
 > [10.5281/zenodo.22023625](https://doi.org/10.5281/zenodo.22023625).
+
+Each release has its own version DOI, listed on the Zenodo record under
+*Versions*. Cite the one you ran rather than the number written here: a
+release cannot record a DOI that Zenodo issues only after the release is
+published, so any version number in this file is the version being
+prepared, not the one you downloaded.
 
 `CITATION.cff` carries the same in machine-readable form.
 
