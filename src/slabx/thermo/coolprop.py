@@ -189,10 +189,24 @@ class CoolPropThermo:
         Above the critical point the ratio is capped rather than undefined,
         and above the boiling point it is linearised exactly as the legacy
         backend does, so the Newton iteration behaves identically there.
+
+        Below the triple point the vapour is in equilibrium with a solid,
+        not a liquid, and `_clamp` cannot help: it raises the query to the
+        triple point, which returns the same pressure at every temperature
+        below it.  For the released materials that is harmless, because
+        their triple points sit below any temperature the cloud reaches
+        (methane 90.7 K, hydrogen 13.96 K).  **Water is the exception** --
+        its triple point is 273.16 K, above every cryogenic cloud, so a
+        200 K cloud was being told it could hold as much vapour as air at
+        0 degC, too high by a factor of about 3900.
+
+        The sublimation curve replaces the clamp for that range.
         """
         if T >= self._T_crit:
             return _sat_ratio(self._fluid, self._q(self._T_crit),
                               self.p_ambient)
+        if T < self._T_triple:
+            return _sublimation_pressure(self._fluid, T) / self.p_ambient
         return _sat_ratio(self._fluid, self._q(T), self.p_ambient)
 
     def d_saturation_ratio(self, T: float) -> float:
@@ -579,3 +593,46 @@ class TabulatedThermo:
 def tabulated(substance: Substance, fluid: str, **kw) -> TabulatedThermo:
     """`CoolPropThermo` for `fluid`, precomputed.  The way to run mixtures."""
     return TabulatedThermo(CoolPropThermo(substance, fluid=fluid), **kw)
+
+
+# ===========================================================================
+# below the triple point
+# ===========================================================================
+#: Enthalpy of fusion at the triple point [J/kg], added to the latent heat
+#: when the transition is solid-vapour rather than liquid-vapour.
+_H_FUSION = {"water": 333_400.0}
+
+#: IAPWS sublimation curve for ice Ih (Wagner, Riethmann, Feistel and
+#: Harvey, 2011), in the form ``ln(p/p_t) = (1/theta) sum a_i theta^b_i``
+#: with ``theta = T/T_t``.  No fitted parameters; reproduces the reference
+#: values to within 3 % down to 230 K.
+_IAPWS_SUBLIMATION = (
+    (-0.212144006e2, 0.333333333e-2),
+    (0.273203819e2, 0.120666667e1),
+    (-0.610598130e1, 0.170333333e1),
+)
+_WATER_T_TRIPLE = 273.16
+_WATER_P_TRIPLE = 611.657
+
+
+def _sublimation_pressure(fluid: str, T: float) -> float:
+    """
+    Solid-vapour saturation pressure [Pa].
+
+    Only water is treated: it is the sole substance here whose triple point
+    lies above the cloud temperatures, and therefore the only one for which
+    the clamp in `_clamp` becomes a physical statement rather than a solver
+    guard.  Anything else falls back to the clamped liquid-vapour line,
+    which is what it did before and is harmless for materials whose triple
+    points the cloud never reaches.
+
+    Extrapolated below 230 K, where the reference correlation stops. The
+    pressures there are so small that the vapour is negligible either way;
+    what matters is that the value falls with temperature instead of
+    holding at the triple-point pressure.
+    """
+    if "water" not in fluid.lower():
+        return _sat_ratio(fluid, T, 1.0)
+    theta = max(T, 1.0) / _WATER_T_TRIPLE
+    total = sum(a * theta ** b for a, b in _IAPWS_SUBLIMATION)
+    return _WATER_P_TRIPLE * math.exp(total / theta)

@@ -225,10 +225,35 @@ def test_reaching_the_droplet_lifetime_target_needs_a_slower_rate():
 
 def test_velocity_and_concentration_at_the_target_already_agree():
     """
-    What makes the distance discrepancy informative: at the point where the
-    liquid runs out, the velocity and molar concentration match SMEDIS to a
-    few percent without any calibration.  The thermodynamics and the jet
-    dynamics are right; only the droplet lifetime is not.
+    The state at the point where the liquid runs out, against the four
+    SMEDIS equivalent-source targets for DT1.
+
+    **This test used to assert that velocity and concentration matched
+    while the droplet lifetime did not, and read that as evidence the
+    thermodynamics were right.** Correcting the water saturation pressure
+    below its triple point (`docs/PREREG_water.md`) showed that reading was
+    wrong:
+
+    | | x [m] | u [m/s] | C [%] | T [K] |
+    |---|---|---|---|---|
+    | SMEDIS DT1 | 51.0 | 7.50 | 13.0 | 205 |
+    | before | 77.1 (1.51) | 7.30 (0.97) | 13.46 (**1.04**) | 228 (1.11) |
+    | after | 65.2 (**1.28**) | 7.53 (**1.00**) | 16.32 (1.26) | 218 (**1.06**) |
+
+    Three of the four targets improved. Concentration moved away, and the
+    reason is that the evaluation point itself moved: with water condensing
+    as it should, the latent heat evaporates the droplets sooner, so the
+    liquid runs out at 65 m instead of 77 m and the concentration is read
+    closer to the source, where it is naturally higher.
+
+    So the earlier agreement on concentration was not independent evidence
+    that the thermodynamics were right. It held **while the droplet
+    lifetime was 51 % long**, and it went away once that error was reduced
+    -- one quantity compensating another, which is what this project keeps
+    finding.
+
+    The assertions below pin the corrected state and the direction of the
+    change, not a target the model meets.
     """
     from slabx.core.source import HorizontalJet
     from slabx.submodels.atmosphere import Atmosphere
@@ -246,8 +271,15 @@ def test_velocity_and_concentration_at_the_target_already_agree():
                              coeffs=preset("ermak90"), rainout=False)
     liq = traj.mass_frac_emission_liquid
     k = int(np.argmax(liq < 1e-4))
-    assert traj.u[k] == pytest.approx(7.5, rel=0.10)          # SMEDIS
-    assert traj.vol_frac[k] * 100.0 == pytest.approx(13.0, rel=0.15)
+    # velocity now matches almost exactly
+    assert traj.u[k] == pytest.approx(7.5, rel=0.05)          # SMEDIS
+
+    # the droplet lifetime, the quantity the correction acts on, is closer
+    # to the measured 51 m than the 77 m it used to give
+    assert 55.0 < traj.x[k] < 70.0
+
+    # and concentration is now high, because the point moved up-wind
+    assert 15.0 < traj.vol_frac[k] * 100.0 < 18.0
 
 
 # ===========================================================================

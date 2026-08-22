@@ -233,3 +233,71 @@ def test_legacy_datum_is_exactly_the_old_constant(sub):
     for T in (50.0, sub.T_boil, 300.0, 1000.0):
         assert th.dh_vap_datum(T) == sub.dh_vap_ref
     assert WATER.dh_vap_ref == pytest.approx(3136402.4, rel=1e-9)
+
+
+def test_water_sublimates_below_its_triple_point():
+    """
+    `_clamp` raises saturation queries to the triple point, which is right
+    for a solver guard and wrong as physics for the one substance whose
+    triple point sits above the cloud temperatures.
+
+    Methane's is 90.7 K and hydrogen's 13.96 K, both below anything a
+    cloud reaches, so the clamp never engages for the released material.
+    Water's is 273.16 K. A 200 K cloud was therefore told it could hold as
+    much vapour as air at 0 degC -- too high by a factor of about 3900 --
+    so water did not condense when it should have.
+
+    The IAPWS sublimation curve (Wagner, Riethmann, Feistel and Harvey,
+    2011) replaces the clamp below the triple point. No fitted parameters.
+    See `docs/PREREG_water.md`.
+    """
+    import math
+
+    from slabx.thermo.coolprop import coolprop_water
+
+    water = coolprop_water()
+    p_amb = water.p_ambient
+
+    def reference(T):
+        t_t, p_t = 273.16, 611.657
+        terms = ((-0.212144006e2, 0.333333333e-2),
+                 (0.273203819e2, 0.120666667e1),
+                 (-0.610598130e1, 0.170333333e1))
+        theta = T / t_t
+        return p_t * math.exp(
+            sum(a * theta ** b for a, b in terms) / theta)
+
+    for T in (260.0, 240.0, 200.0, 150.0):
+        got = water.saturation_ratio(T) * p_amb
+        assert got == pytest.approx(reference(T), rel=1e-6), T
+
+    # it falls with temperature rather than holding at the triple point
+    below = [water.saturation_ratio(T) for T in (260.0, 240.0, 200.0, 150.0)]
+    assert all(a > b for a, b in zip(below, below[1:]))
+
+    # and 200 K is far below the triple-point value it used to return
+    assert water.saturation_ratio(200.0) * p_amb < 1.0
+
+    # above the triple point nothing changed
+    assert water.saturation_ratio(280.0) * p_amb == pytest.approx(991.8,
+                                                                  rel=0.01)
+
+
+def test_the_dense_gas_validation_cannot_see_the_water_backend():
+    """
+    The negative control for the correction above, and the reason it was
+    safe to make.
+
+    `lng_pools.predict_lfl_distance` passes `water_backend()`, which
+    returns `LegacyThermo`, so nothing inside `CoolPropThermo` can reach
+    the published LFL statistics. They are pinned here to the digits the
+    paper reports; a change means the reading of the call path is wrong.
+    """
+    from slabx.validation.lng_pools import compare_lfl
+    from slabx.validation.metrics import metrics
+
+    r = compare_lfl()
+    m = metrics(r["observed"], r["predicted"])
+    assert m.FAC2 == pytest.approx(0.90)
+    assert m.MG == pytest.approx(1.252, abs=5e-4)
+    assert m.NMSE == pytest.approx(0.121, abs=5e-4)
