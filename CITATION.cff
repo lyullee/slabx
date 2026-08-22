@@ -20,7 +20,7 @@ authors:
     email: lyullee@kgs.or.kr
 license: MIT
 repository-code: "https://github.com/lyullee/slabx"
-version: 1.0.5
+version: 1.0.6
 date-released: "2026-08-20"
 # Concept DOI: resolves to the latest version. The version-specific DOI for
 # each release is on its own Zenodo record.

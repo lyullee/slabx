@@ -194,3 +194,42 @@ This was not registered — it was found by a test failing — and it is
 recorded here rather than in the results because it concerns a
 diagnostic, not a validation statistic. The test now pins the corrected
 state and says what changed.
+
+### Addendum — the fusion enthalpy (v1.0.6)
+
+The first correction changed the saturation pressure but left the latent
+heat on the liquid-vapour value, because `_dh_vap` also passes through
+`_q`, which clamps to the triple point. The curve being used and the
+energy released by the phase change were therefore inconsistent: the
+Clausius-Clapeyron slope of the sublimation line does not match the
+enthalpy of vaporisation.
+
+Adding the enthalpy of fusion (333.4 kJ/kg) below the triple point:
+
+| water latent heat | v1.0.5 | v1.0.6 |
+|---|---|---|
+| 280 K | 2,484,652 | 2,484,652 |
+| 273.16 K | 2,499,722 | 2,499,722 |
+| 260 K | 2,499,722 | **2,833,122** |
+| 200 K | 2,499,722 | **2,833,122** |
+
+**Measured effect: none.**
+
+| | FAC2 | MG change |
+|---|---|---|
+| LFL 10 trials | 0.90 → 0.90 | **bit-identical** |
+| `slab90` | 0.67 → 0.67 | 0.0 % |
+| `coolprop` | 0.58 → 0.58 | +0.1 % |
+| `composition` | 0.75 → 0.75 | −0.0 % |
+| `canonical+coolprop` | 0.50 → 0.50 | +0.0 % |
+
+The DT1 equivalent-source comparison is unchanged to the digits reported:
+65.2 m, 7.53 m/s, 16.32 %, 218 K.
+
+The correction is made because the thermodynamics should be consistent,
+not because it changes an answer. At these temperatures the water vapour
+pressure is already small enough that a 13 % change in its latent heat
+moves nothing.
+
+**This means the v1.0.5 numbers stand.** A manuscript quoting them does
+not need re-running against v1.0.6.

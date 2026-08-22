@@ -216,10 +216,23 @@ class CoolPropThermo:
 
     # -- caloric ---------------------------------------------------------
     def dh_vap(self, T: float) -> float:
-        """Zero above the critical point, where there is nothing to condense."""
+        """
+        Zero above the critical point, where there is nothing to condense.
+
+        Below the triple point the transition is solid-vapour, so the
+        enthalpy of fusion is added to the vaporisation enthalpy. Without
+        it the saturation pressure would follow the sublimation curve while
+        the latent heat stayed on the liquid-vapour value, which is
+        thermodynamically inconsistent: the Clausius-Clapeyron slope of the
+        curve being used would not match the energy released by the phase
+        change.
+        """
         if T >= self._T_crit:
             return 0.0
-        return _dh_vap(self._fluid, self._q(T))
+        base = _dh_vap(self._fluid, self._q(T))
+        if T < self._T_triple:
+            return base + _H_FUSION.get(self._fluid.lower(), 0.0)
+        return base
 
     def cp_vapour(self, T: float) -> float:
         """
