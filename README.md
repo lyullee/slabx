@@ -174,3 +174,12 @@ MIT, for this implementation. `THIRD_PARTY_NOTICES.md` records the
 third-party works relied on, none of which are included here. The original SLAB source is not included and
 carries its own non-commercial terms; see `LICENSE` and
 `golden/fortran/README.md`.
+
+## Source-ledger handoff
+
+Version 1.0.7 adds `slabx.SourceLedger` and `SourceState`. The ledger stores
+the resolved source-plane composition, rate, temperature, density, area,
+height, direction, and physical stage in a JSON-safe form. It can be shared
+with route-specific adapters such as DEGADISx without silently changing the
+SLAB source assumptions. Native pool and horizontal-jet constructors reject
+unresolved liquid states instead of inventing an impact or evaporation history.
