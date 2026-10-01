@@ -144,6 +144,7 @@ everything else runs.
 | `docs/02_VALIDATION_REFERENCE.md` | agreement with the original |
 | `docs/03_VALIDATION_FIELD.md` | agreement with measurements |
 | `docs/04_DEVELOPMENT.md` | defects found, and the method that found them |
+| `docs/05_EXTENSION_CONTRACT.md` | boundary and conservation rules for material-specific source adapters |
 
 ## Citing
 
@@ -183,3 +184,10 @@ height, direction, and physical stage in a JSON-safe form. It can be shared
 with route-specific adapters such as DEGADISx without silently changing the
 SLAB source assumptions. Native pool and horizontal-jet constructors reject
 unresolved liquid states instead of inventing an impact or evaporation history.
+
+Material-specific packages may hand a pre-diluted cloud to the core. In that
+case `total_mass` and `released_mass(t)` must describe the emitted species used
+by the plume-to-puff clock, while entrained carrier mass is reported
+separately. See `docs/05_EXTENSION_CONTRACT.md`. The LH2 implementation and
+its validation record live in the companion
+[`slabx-lh2`](https://github.com/lyullee/slabx-lh2) repository.
