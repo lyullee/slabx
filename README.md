@@ -151,6 +151,9 @@ everything else runs.
 Cite the version you ran -- the version DOI fixes the files, the concept DOI
 resolves to the latest:
 
+- **slabx 1.0.8:** [10.5281/zenodo.23084448](https://doi.org/10.5281/zenodo.23084448)
+- **All versions:** [10.5281/zenodo.22023625](https://doi.org/10.5281/zenodo.22023625)
+
 > Lee, U. (2026). *slabx: a Python reimplementation of the SLAB dense-gas
 > dispersion model*. Zenodo. Concept DOI
 > [10.5281/zenodo.22023625](https://doi.org/10.5281/zenodo.22023625).
